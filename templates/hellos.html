@@ -1,11 +1,6 @@
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="/static/styles.css" media="all"/>
-</head>
-<body>
-{% for user in users %}
-    <p>Hello {{ user }}</p>
-{% endfor %}
-<script src="/static/alert.js"></script>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+    {% for user in users %}
+        <p>Hello {{ user }}</p>
+    {% endfor %}
+{% endblock %}
