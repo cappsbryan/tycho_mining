@@ -112,3 +112,6 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# Tycho CSV files
+setup/csv/
