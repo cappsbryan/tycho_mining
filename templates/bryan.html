@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for user in users %}
+        <p>Oh hi hello there {{ user }}</p>
+    {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        markActiveNavItem("bryan");
+    </script>
+{% endblock %}

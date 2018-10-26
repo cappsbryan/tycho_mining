@@ -11,12 +11,13 @@ env = Environment(
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    template = env.get_template('home.html')
+    return template.render()
 
 
-@app.route('/heys')
-def heys():
-    template = env.get_template('hellos.html')
+@app.route('/bryan')
+def bryan():
+    template = env.get_template('bryan.html')
     return template.render(users=['Dragon', 'Aaron', 'Caleb'])
 
 
