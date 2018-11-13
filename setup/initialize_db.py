@@ -6,11 +6,13 @@ First, install MySQL server on your machine.
     Create a database named tycho and a user named tycho_dev with a password dev123
     The following MySQL commands should work for this:
         create database tycho;
-        create user 'tycho_dev'@'localhost' identified by 'dev123';
+        create user 'tycho_dev'@'localhost' identified with mysql_native_password by 'dev123';
         grant all on tycho.* to 'tycho_dev'@'localhost';
 
 Second, make sure you have installed the libraries in the requirements.txt
     Pycharm should show a banner at the top to do that.
+    Install the wheel stuff like the top answer here if you're on Windows:
+    https://stackoverflow.com/questions/26866147/mysql-python-install-error-cannot-open-include-file-config-win-h
 
 Third, make sure you download and copy the CSV files into a csv folder inside this setup folder.
     They should be named cumulative all conditions weekly US.csv and noncumulative all conditions weekly US.csv
