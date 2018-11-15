@@ -1,0 +1,108 @@
+Diseases in cumulative but not in noncumulative:
+Acquired immune deficiency syndrome
+Congenital rubella syndrome
+Congenital syphilis
+Disease caused by West Nile virus
+Haemophilus influenzae type b infection
+Intestinal infection caused by Escherichia coli O157:H7
+Listeriosis
+Syphilis
+
+Everything else under all diseases is included in noncumulative
+
+Diseases in noncumulative but not in cumulative:
+Quite a few, there's 92 total diseases and cumulative only has 63
+
+All diseases:
+Acquired immune deficiency syndrome
+Active tuberculosis
+Acute hepatitis C
+Acute nonparalytic poliomyelitis
+Acute paralytic poliomyelitis
+Acute poliomyelitis
+Acute type A viral hepatitis
+Acute type B viral hepatitis
+Amebic dysentery
+Anthrax
+Aseptic meningitis
+Babesiosis
+Bacillary dysentery
+Brucellosis
+Campylobacteriosis
+Chlamydia trachomatis infection
+Chlamydial infection
+Cholera
+Coccidioidomycosis
+Congenital rubella syndrome
+Congenital syphilis
+Cryptosporidiosis
+Dengue
+Dengue hemorrhagic fever
+Dengue without warning signs
+Diphtheria
+Disease caused by West Nile virus
+Disorder of nervous system caused by West Nile virus
+Dysentery
+Encephalitis
+Encephalitis lethargica
+Giardiasis
+Gonorrhea
+Haemophilus influenzae infection
+Haemophilus influenzae type b infection
+Hepatitis non-A non-B
+Human anaplasmosis caused by Anaplasma phagocytophilum
+Human ehrlichiosis caused by Ehrlichia chaffeensis
+Infantile paralysis
+Infection caused by Escherichia coli
+Infection caused by larvae of Trichinella
+Infection caused by non-cholerae vibrio
+Infection caused by Shiga toxin producing Escherichia coli
+Infective encephalitis
+Inflammatory disease of liver
+Influenza
+Intestinal infection caused by Escherichia coli O157:H7
+Invasive drug resistant Streptococcus pneumoniae disease
+Invasive Group A beta-hemolytic streptococcal disease
+Invasive meningococcal disease
+Invasive Streptococcus pneumoniae disease
+Legionella infection
+Leprosy
+Listeriosis
+Lobar pneumonia
+Lyme disease
+Malaria
+Measles
+Meningitis
+Meningococcal infectious disease
+Meningococcal meningitis
+Mumps
+Murine typhus
+Ornithosis
+Pellagra
+Pertussis
+Pneumonia
+Post-infectious encephalitis
+Primary encephalitis
+Rocky Mountain spotted fever
+Rubella
+Salmonella infection
+Scarlet fever
+Shigellosis
+Smallpox
+Smallpox without rash
+Spotted fever group rickettsial disease
+Streptococcal sore throat
+Syphilis
+Tetanus
+Toxic shock syndrome
+Tuberculosis
+Tularemia
+Typhoid and paratyphoid fevers
+Typhoid fever
+Typhus group rickettsial disease
+Varicella
+Viral hepatitis
+Viral hepatitis type B
+Viral hepatitis, type A
+West Nile fever without encephalitis
+Yellow fever
