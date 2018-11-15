@@ -1,0 +1,4 @@
+Project notes
+
+Pre-processing:
+We had to replace Admin2Name values of “COÖS COUNTY” with “COOS COUNTY” because team members with Windows were unable to insert the data into their MySQL databases.
