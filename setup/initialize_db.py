@@ -35,6 +35,8 @@ db_connection = MySQLdb.connect(
 
 setup_dir = os.path.dirname(os.path.abspath(__file__))
 
+csv_file = None
+
 
 def main():
     if tables_exist():
@@ -42,11 +44,10 @@ def main():
     create_tables()
     cumulative_path = os.path.join(setup_dir, 'csv', 'cumulative all conditions weekly US.csv')
     noncumulative_path = os.path.join(setup_dir, 'csv', 'noncumulative all conditions weekly US.csv')
-    cumulative = load_csv(cumulative_path)
-    noncumulative = load_csv(noncumulative_path)
-    save_data(cumulative, cumulative_insert_statement())
-    save_data(noncumulative, noncumulative_insert_statement())
+    save_data(cumulative_path, cumulative_insert_statement())
+    save_data(noncumulative_path, noncumulative_insert_statement())
     db_connection.close()
+    csv_file.close()
 
 
 def tables_exist() -> bool:
@@ -82,26 +83,22 @@ def create_tables():
                 exit(1)
 
 
-def load_csv(path) -> List[List[str]]:
-    """
-    Reads the CSV file at the given path into memory
-    :param path: Path to a CSV file
-    :return: A list of strings for each line in the file
-    """
-    result = []
-    with open(path, newline='') as csv_file:
-        for row in csv.reader(csv_file):
-            result.append(row)
-    return result
-
-
-def save_data(rows: List[List[str]], insert_statement: str):
+def save_data(path, insert_statement: str):
+    global csv_file
+    csv_file = open(path, newline='')
+    rows = csv.reader(csv_file)
     cursor = db_connection.cursor()
-    header = rows.pop(0)
+    header = rows.__next__()
     age_range_index = replace_age_range_label(header)
+    i = 0
     for row in rows:
         replace_age_range(row, age_range_index)
         replace_na(row)
+        if i % 500 == 0:
+            db_connection.commit()
+            print(i, datetime.now(), insert_statement, row)
+        cursor.execute(insert_statement, row)
+        i += 1
     # cursor.executemany(insert_statement, rows)
     # replace insert_many call below with executemany call above if you don't care about progress updates
     insert_many(cursor, insert_statement, rows)
