@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 import simple_queries
+from association_rules import association_rules
 
 app = Flask(__name__)
 
@@ -10,9 +11,23 @@ def hello_world():
     return render_template('home.html')
 
 
-@app.route('/bryan')
-def bryan():
-    return render_template('bryan.html', users=['Dragon', 'Aaron', 'Caleb'])
+@app.route('/association_rules')
+def association_rules_page():
+    return render_template('association_rules.html')
+
+
+@app.route('/association_rules_results')
+def association_rules_results():
+    data = request.args
+    min_support = float(data['min_support'])
+    max_size = int(data['max_size'])
+    n_rules = int(data['n_rules'])
+    confidences = association_rules(min_support, max_size, n_rules)
+    return render_template('association_rules_results.html',
+                           min_support=min_support,
+                           max_size=max_size,
+                           n_rules=n_rules,
+                           confidences=confidences)
 
 
 @app.route('/caleb')

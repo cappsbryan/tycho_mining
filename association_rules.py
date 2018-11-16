@@ -1,7 +1,7 @@
 import csv
 import itertools
 from collections import defaultdict
-from typing import Tuple, Dict, FrozenSet, Set, List
+from typing import Tuple, Dict, FrozenSet, Set, List, Any
 
 import MySQLdb
 
@@ -12,20 +12,31 @@ db_connection = MySQLdb.connect(
     db="tycho"
 )
 
+ItemSet = FrozenSet[str]
+Rule = Tuple[FrozenSet[str], FrozenSet[str]]
+ListRule = List[List[str]]
 
-def main():
+
+def association_rules(min_support: float, max_size: int, n_rules: int) -> Dict[str, List[Dict[str, Any]]]:
     diseases_dict = diseases_at_time_and_place()
     write_file(diseases_dict)
     transactions = list(diseases_dict.values())
-    frequent, supports = apriori(0.05, 3, transactions)
-    print(frequent)
-    print(len(frequent))
+    frequent, supports = apriori(min_support, max_size, transactions)
     rules = rule_generation(frequent)
-    print('rules:', rules)
-    print('number of rules:', len(rules))
-    print()
-    confidences = top_rules(rules, 10, transactions, supports)
-    print(f'Top {10} ranked association rules:', prettify_rules(confidences))
+    confidences = top_rules(rules, n_rules, transactions, supports)
+    return reformat_rules_for_json(confidences)
+
+
+def reformat_rules_for_json(confidences: Dict[Rule, float]):
+    rules = []
+    for rule in confidences:
+        rule_dict = {
+            "x": sorted(rule[0]),
+            "y": sorted(rule[1]),
+            "confidence": confidences[rule]
+        }
+        rules.append(rule_dict)
+    return {"rules": rules}
 
 
 def diseases_at_time_and_place() -> Dict[Tuple[str, int], FrozenSet[str]]:
@@ -88,9 +99,6 @@ def write_file(all_diseases: Dict[Tuple[str, int], FrozenSet[str]]):
         writer = csv.writer(csv_file)
         for pair, diseases in all_diseases.items():
             writer.writerow([pair[0], pair[1], len(diseases)] + list(diseases))
-
-
-ItemSet = FrozenSet[str]
 
 
 def apriori(min_support: float, max_n: int, transactions: List[ItemSet]) -> (Set[ItemSet], Dict[ItemSet, int]):
@@ -214,9 +222,6 @@ def candidates_in_transaction(candidates_k: Set[ItemSet], transaction: ItemSet) 
     return candidates
 
 
-Rule = Tuple[FrozenSet[str], FrozenSet[str]]
-
-
 def rule_generation(frequents: Set[FrozenSet[str]]) -> List[Rule]:
     """
     Generate rules from frequent item sets
@@ -247,9 +252,13 @@ def rule_confidence(rule: Rule, transactions, supports):
 def prettify_rules(confidences: Dict[Rule, float]) -> List[str]:
     strings = '\n'
     for i, rule in enumerate(sorted(confidences)):
-        rule_string = prettify_itemset(rule[0]) + ' -> ' + prettify_itemset(rule[1])
+        rule_string = prettify_rule(rule)
         strings += rule_string.ljust(100) + str(confidences[rule]).rjust(10) + '\n'
     return strings
+
+
+def prettify_rule(rule):
+    return prettify_itemset(rule[0]) + ' -> ' + prettify_itemset(rule[1])
 
 
 def prettify_itemset(itemset):
@@ -260,7 +269,3 @@ def prettify_itemset(itemset):
             string += ", "
     string += ' }'
     return string
-
-
-if __name__ == '__main__':
-    main()
