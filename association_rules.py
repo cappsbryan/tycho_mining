@@ -1,6 +1,7 @@
 import csv
 import itertools
 from collections import defaultdict
+from functools import reduce
 from typing import Tuple, Dict, FrozenSet, Set, List, Any
 
 import MySQLdb
@@ -17,13 +18,13 @@ Rule = Tuple[FrozenSet[str], FrozenSet[str]]
 ListRule = List[List[str]]
 
 
-def association_rules(min_support: float, max_size: int, n_rules: int) -> Dict[str, List[Dict[str, Any]]]:
+def association_rules(min_support: float, min_confidence: float, max_size: int) -> Dict[str, List[Dict[str, Any]]]:
     diseases_dict = diseases_at_time_and_place()
     write_file(diseases_dict)
     transactions = list(diseases_dict.values())
     frequent, supports = apriori(min_support, max_size, transactions)
     rules = rule_generation(frequent)
-    confidences = top_rules(rules, n_rules, transactions, supports)
+    confidences = top_rules(rules, min_confidence, transactions, supports)
     return reformat_rules_for_json(confidences)
 
 
@@ -238,10 +239,11 @@ def rule_generation(frequents: Set[FrozenSet[str]]) -> List[Rule]:
     return rules
 
 
-def top_rules(rules: List[Rule], k: int, transactions, supports) -> Dict[Rule, float]:
+def top_rules(rules: List[Rule], min_confidence: float, transactions, supports) -> Dict[Rule, float]:
     all_confidences = {rule: rule_confidence(rule, transactions, supports) for rule in rules}
-    top_confidences = sorted(all_confidences.items(), key=lambda kv: kv[1], reverse=True)
-    return dict(top_confidences[:k])
+    sorted_confidences = sorted(all_confidences.items(), key=lambda kv: kv[1], reverse=True)
+    top_confidences = [item for item in sorted_confidences if item[1] >= min_confidence]
+    return dict(top_confidences)
 
 
 def rule_confidence(rule: Rule, transactions, supports):
@@ -269,3 +271,14 @@ def prettify_itemset(itemset):
             string += ", "
     string += ' }'
     return string
+
+
+def arm_amo(transactions: List[ItemSet]):
+    diseases = sorted(reduce(lambda s1, s2: s1.union(s2), transactions))
+    binary_values = []
+
+
+if __name__ == '__main__':
+    diseases_dict = diseases_at_time_and_place()
+    transactions = list(diseases_dict.values())
+    arm_amo(transactions)

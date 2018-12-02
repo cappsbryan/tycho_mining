@@ -20,13 +20,10 @@ def association_rules_page():
 def association_rules_results():
     data = request.args
     min_support = float(data['min_support'])
+    min_confidence = float(data['min_confidence'])
     max_size = int(data['max_size'])
-    n_rules = int(data['n_rules'])
-    confidences = association_rules(min_support, max_size, n_rules)
+    confidences = association_rules(min_support, min_confidence, max_size)
     return render_template('association_rules_results.html',
-                           min_support=min_support,
-                           max_size=max_size,
-                           n_rules=n_rules,
                            confidences=confidences)
 
 
