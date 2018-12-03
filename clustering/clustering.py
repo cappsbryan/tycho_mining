@@ -1,19 +1,27 @@
+# K-means implementation written by Dragon Tran
+# Data Mining Semester Project Group Tycho
 from statistics import mean
 import math
 
 
 def main():
-    indexes, data = load_data()
+    specify_k_means_parameters(1940)
 
+
+def specify_k_means_parameters(year, diseases=[]):
+    indexes, data = load_data()
     query_data = []
     query_index = []
     for i, index in enumerate(indexes):
-        if index[1] == 1880:
+        if index[1] == year:
             query_data.append(data[i])
             query_index.append(indexes[i])
 
-    total_sum, sse_list, new_centroids, new_k_clusters = k_means_clustering(3, query_data, query_index)
+    total_sum, sse_list, new_centroids, new_k_clusters = k_means_clustering(2, query_data, query_index)
 
+    # print(total_sum)
+    # print(sse_list)
+    # print(new_centroids)
     for cluster in new_k_clusters:
         print(cluster)
 
@@ -70,6 +78,8 @@ def k_means_clustering(k, data, data_indices=None):
 def calculate_sse(centroid, cluster):
     sum_of_squared_error = 0
     for point in cluster:
+        # calculate distance squared from point to nearest cluster
+        # sum all squared error
         sum_of_squared_error += distance(centroid, point) ** 2
     return sum_of_squared_error
 
