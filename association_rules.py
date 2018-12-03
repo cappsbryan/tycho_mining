@@ -1,8 +1,6 @@
-import csv
 import itertools
 from collections import defaultdict
-from functools import reduce
-from typing import Tuple, Dict, FrozenSet, Set, List, Any
+from typing import Tuple, Dict, FrozenSet, Set, List, Any, Union
 
 import MySQLdb
 
@@ -17,10 +15,15 @@ ItemSet = FrozenSet[str]
 Rule = Tuple[FrozenSet[str], FrozenSet[str]]
 ListRule = List[List[str]]
 
+BinaryItemSet = FrozenSet[int]
+BinaryRule = Tuple[FrozenSet[int], FrozenSet[int]]
+
+GenericItemSet = Union[ItemSet, BinaryItemSet]
+GenericRule = Tuple[GenericItemSet, GenericItemSet]
+
 
 def association_rules(min_support: float, min_confidence: float, max_size: int) -> Dict[str, List[Dict[str, Any]]]:
     diseases_dict = diseases_at_time_and_place()
-    write_file(diseases_dict)
     transactions = list(diseases_dict.values())
     frequent, supports = apriori(min_support, max_size, transactions)
     rules = rule_generation(frequent)
@@ -51,6 +54,8 @@ def diseases_at_time_and_place() -> Dict[Tuple[str, int], FrozenSet[str]]:
     all_diseases = defaultdict(lambda: frozenset())
     cursor = db_connection.cursor()
 
+    threshold = 200
+
     # For cumulative, there exists a record for the whole year, so we find those using a combination
     # of the number of days between PeriodStartDate and PeriodEndDate (the DATEDIFF call)
     # and finding the average date between the start and end to get the most accurate year for the range
@@ -59,7 +64,7 @@ def diseases_at_time_and_place() -> Dict[Tuple[str, int], FrozenSet[str]]:
                    "INTERVAL DATEDIFF(PeriodEndDate, PeriodStartDate) / 2 DAY)) Year, "
                    "ConditionName "
                    "FROM cumulative_all_conditions "
-                   "WHERE CAST(CountValue AS DECIMAL) > 200 "
+                   f"WHERE CAST(CountValue AS DECIMAL) > {threshold} "
                    "AND DATEDIFF(PeriodEndDate, PeriodStartDate) BETWEEN 360 AND 370 "
                    "ORDER BY Year, Admin1Name, ConditionName")
     update_diseases(all_diseases, cursor)
@@ -69,7 +74,7 @@ def diseases_at_time_and_place() -> Dict[Tuple[str, int], FrozenSet[str]]:
     cursor.execute("SELECT Admin1Name, EXTRACT(YEAR FROM PeriodEndDate) Year, ConditionName, SUM(CountValue) Count "
                    "FROM noncumulative_all_conditions "
                    "GROUP BY Admin1Name, Year, ConditionName "
-                   "HAVING SUM(CAST(CountValue AS DECIMAL)) > 200 "
+                   f"HAVING SUM(CAST(CountValue AS DECIMAL)) > {threshold} "
                    "ORDER BY Year, Admin1Name, ConditionName;")
     update_diseases(all_diseases, cursor)
 
@@ -89,17 +94,6 @@ def update_diseases(all_diseases: Dict[Tuple[str, int], FrozenSet[str]], cursor:
         disease = current_row[2]
         all_diseases[place_time] = all_diseases[place_time].union({disease})
         current_row = cursor.fetchone()
-
-
-def write_file(all_diseases: Dict[Tuple[str, int], FrozenSet[str]]):
-    """
-    Write all_diseases to a file
-    :param all_diseases: dict from tuple of str and int to frozen set of strings
-    """
-    with open('/Users/bryancapps/Desktop/disease_transactions.csv', 'wt', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        for pair, diseases in all_diseases.items():
-            writer.writerow([pair[0], pair[1], len(diseases)] + list(diseases))
 
 
 def apriori(min_support: float, max_n: int, transactions: List[ItemSet]) -> (Set[ItemSet], Dict[ItemSet, int]):
@@ -183,7 +177,7 @@ def find_support(itemset: ItemSet, transactions, supports) -> float:
         return calculate_support(itemset, transactions, supports)
 
 
-def gen_candidates(prev_sets: Set[ItemSet]) -> Set[ItemSet]:
+def gen_candidates(prev_sets: Set[GenericItemSet]) -> Set[GenericItemSet]:
     """
     Generate the candidate item sets of size k based on prev_sets, a set of frequent item sets of size k-1
     :param prev_sets: set of item sets all of size k-1
@@ -195,6 +189,7 @@ def gen_candidates(prev_sets: Set[ItemSet]) -> Set[ItemSet]:
         list_a, list_b = sorted(set_a), sorted(set_b)
         if list_a[:k - 2] != list_b[:k - 2] or list_a[k - 2] == list_b[k - 2]:
             continue
+        # TODO: Figure out if k - 2 equals -1
         itemset = list_a + list_b[-1:]
         subsets_are_frequent = True
         for subset in itertools.combinations(itemset, k - 1):
@@ -271,14 +266,3 @@ def prettify_itemset(itemset):
             string += ", "
     string += ' }'
     return string
-
-
-def arm_amo(transactions: List[ItemSet]):
-    diseases = sorted(reduce(lambda s1, s2: s1.union(s2), transactions))
-    binary_values = []
-
-
-if __name__ == '__main__':
-    diseases_dict = diseases_at_time_and_place()
-    transactions = list(diseases_dict.values())
-    arm_amo(transactions)
