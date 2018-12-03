@@ -14,9 +14,11 @@ def arm_amo(min_support: float, min_confidence: float, transactions: List[ItemSe
     t = 0
     binary_data = make_binary(transactions)
     rules = apriori_rules(min_support, min_confidence, binary_data)
-    net_f = net_fitness(rules, binary_data)
-    fitnesses = [fit(rule, binary_data) for rule in rules]
-    glob_min_support = sum(support(set.union(*rule), binary_data) for rule in rules)
+    while True:
+        net_f = net_fitness(rules, binary_data)
+        fitnesses = [fit(rule, binary_data) for rule in rules]
+        glob_min_support = sum(support(set.union(*rule), binary_data) for rule in rules)
+
 
 
 def make_binary(transactions):

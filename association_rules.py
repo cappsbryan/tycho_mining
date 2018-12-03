@@ -187,9 +187,8 @@ def gen_candidates(prev_sets: Set[GenericItemSet]) -> Set[GenericItemSet]:
     k = len(next(iter(prev_sets))) + 1  # length of candidate itemsets we are generating
     for set_a, set_b in itertools.combinations(prev_sets, 2):
         list_a, list_b = sorted(set_a), sorted(set_b)
-        if list_a[:k - 2] != list_b[:k - 2] or list_a[k - 2] == list_b[k - 2]:
+        if list_a[:-1] != list_b[:-1] or list_a[-1] == list_b[-1]:
             continue
-        # TODO: Figure out if k - 2 equals -1
         itemset = list_a + list_b[-1:]
         subsets_are_frequent = True
         for subset in itertools.combinations(itemset, k - 1):
