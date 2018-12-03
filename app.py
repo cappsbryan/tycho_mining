@@ -18,9 +18,9 @@ def bryan():
 
 @app.route('/caleb')
 def caleb():
-    # similarity = similarity_queries.compute_similarity('Dengue', 'Ornithosis')
+    similarity = similarity_queries.compute_similarity('Dengue', 'Ornithosis')
     condition_names = similarity_queries.condition_names()
-    return render_template('caleb.html', similarity='', conditions=condition_names)
+    return render_template('caleb.html', similarity=similarity, conditions=condition_names)
 
 
 if __name__ == '__main__':

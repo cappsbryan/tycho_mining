@@ -1,6 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Disease Similarity</h1>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Example select</label>
+        <select class="form-control" id="exampleFormControlSelect1">
+            {% for disease in conditions %}
+                <option>{{ disease }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <p>The similarity between the diseases is {{ similarity }}.</p>
 {% endblock %}
 
