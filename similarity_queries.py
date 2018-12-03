@@ -46,7 +46,7 @@ def compute_similarity(disease1, disease2):
     if nonfatal_similarity == 0 and fatal_similarity == 0:
         similarity = 0
     else:
-        similarity = ((nonfatal_count*nonfatal_similarity) + (fatal_count*fatal_similarity))/(nonfatal_count + fatal_count)
+        similarity = ((nonfatal_count*nonfatal_similarity)+(fatal_count*fatal_similarity))/(nonfatal_count+fatal_count)
     print('similarity:', similarity)
     return similarity
 
@@ -113,3 +113,21 @@ def row_similarity(row1, row2, date_range):
 
     # print('similarity:', similarity/len(row1))
     return similarity/len(row1)
+
+
+def condition_names():
+    """
+
+    :return:
+    """
+    """
+    cursor = db_connection.cursor()
+    cursor.execute("SELECT ConditionName FROM noncumulative_all_conditions GROUP BY ConditionName")
+    names = []
+    for name in cursor.fetchall():
+        names.append(name[0])
+    print(names)
+    return names
+    """
+    return ['Amebic dysentery', 'Anthrax', 'Babesiosis', 'Bacillary dysentery', 'Brucellosis', 'Chlamydia trachomatis infection', 'Chlamydial infection', 'Cholera', 'Coccidioidomycosis', 'Cryptosporidiosis', 'Dengue', 'Dengue hemorrhagic fever', 'Dengue without warning signs', 'Diphtheria', 'Dysentery', 'Human ehrlichiosis caused by Ehrlichia chaffeensis', 'Varicella', 'Encephalitis', 'Encephalitis lethargica', 'Giardiasis', 'Gonorrhea', 'Haemophilus influenzae infection', 'Human anaplasmosis caused by Anaplasma phagocytophilum', 'Infection caused by Escherichia coli', 'Infection caused by Shiga toxin producing Escherichia coli', 'Infective encephalitis', 'Inflammatory disease of liver', 'Post-infectious encephalitis', 'Primary encephalitis', 'Viral hepatitis', 'Viral hepatitis type B', 'Viral hepatitis, type A', 'Acute type A viral hepatitis', 'Acute type B viral hepatitis', 'Aseptic meningitis', 'Hepatitis non-A non-B', 'Influenza', 'Invasive meningococcal disease', 'Invasive Streptococcus pneumoniae disease', 'Legionella infection', 'Leprosy', 'Lyme disease', 'Malaria', 'Measles', 'Meningitis', 'Meningococcal infectious disease', 'Meningococcal meningitis', 'Mumps', 'Acute nonparalytic poliomyelitis', 'Acute paralytic poliomyelitis', 'Acute poliomyelitis', 'Infantile paralysis', 'Invasive Group A beta-hemolytic streptococcal disease', 'Lobar pneumonia', 'Ornithosis', 'Pellagra', 'Pneumonia', 'Rocky Mountain spotted fever', 'Rubella', 'Salmonella infection', 'Scarlet fever', 'Shigellosis', 'Smallpox', 'Spotted fever group rickettsial disease', 'Streptococcal sore throat', 'Active tuberculosis', 'Disorder of nervous system caused by West Nile virus', 'Infection caused by larvae of Trichinella', 'Invasive drug resistant Streptococcus pneumoniae disease', 'Murine typhus', 'Pertussis', 'Smallpox without rash', 'Tetanus', 'Toxic shock syndrome', 'Tuberculosis', 'Tularemia', 'Typhoid and paratyphoid fevers', 'Typhoid fever', 'Typhus group rickettsial disease', 'West Nile fever without encephalitis', 'Acute hepatitis C', 'Campylobacteriosis', 'Infection caused by non-cholerae vibrio', 'Yellow fever']
+
