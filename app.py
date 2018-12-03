@@ -22,5 +22,10 @@ def caleb():
     return render_template('caleb.html', avg=average_fatalities, min=min_fatalities, max=max_fatalities)
 
 
+@app.route('/dragon')
+def dragon():
+    return render_template('clustering.html')
+
+
 if __name__ == '__main__':
     app.run()
