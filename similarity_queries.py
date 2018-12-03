@@ -13,63 +13,55 @@ state_codes = ['US-AL', 'US-AK', 'US-AZ', 'US-AR', 'US-CA', 'US-CO', 'US-CT', 'U
                'US-MN', 'US-MS', 'US-MO', 'US-MT', 'US-NE', 'US-NV', 'US-NH', 'US-NJ', 'US-NM', 'US-NY', 'US-NC',
                'US-ND', 'US-OH', 'US-OK', 'US-OR', 'US-PA', 'US-RI', 'US-SC', 'US-SD', 'US-TN', 'US-TX', 'US-UT',
                'US-VT', 'US-VA', 'US-WA', 'US-WV', 'US-WI', 'US-WY']
+date_range = 47313
 
 
 def compute_similarity(disease1, disease2):
-    date_range = compute_date_range()
+    print('computing similarity between', disease1, 'and', disease2)
+    global date_range
     nonfatal_count = 0
     nonfatal_sum = 0
     fatal_count = 0
     fatal_sum = 0
 
-    for state in state_codes:
-        # nonfatal
-        print(state, ': nonfatal:')
-        state_count, state_sum = state_fatality_similarity(disease1, disease2, state, 0, date_range)
-        nonfatal_count += state_count
-        nonfatal_sum += state_sum
+    # nonfatal
+    print('\nnonfatal data')
+    state_count, state_sum = fatality_similarity(disease1, disease2, 0, date_range)
+    nonfatal_count += state_count
+    nonfatal_sum += state_sum
+    print('nonfatal count =', nonfatal_count, '\tnonfatal sum =', nonfatal_sum)
 
-        # fatal
-        print(state, ': fatal:')
-        state_count, state_sum = state_fatality_similarity(disease1, disease2, state, 1, date_range)
-        fatal_count += state_count
-        fatal_sum += state_sum
-
-        print(state, ': fatal_count =', fatal_count, '\tnonfatal_count =', nonfatal_count)
-        print(state, ': fatal_sum   =', fatal_sum, '\tnonfatal_sum =', nonfatal_sum)
+    # fatal
+    print('\nfatal data')
+    state_count, state_sum = fatality_similarity(disease1, disease2, 1, date_range)
+    fatal_count += state_count
+    fatal_sum += state_sum
+    print('fatal count    =', fatal_count, '\tfatal sum    =', fatal_sum)
 
     # compute weighted average of fatal and nonfatal similarity scores
     nonfatal_similarity = 0 if nonfatal_count == 0 else nonfatal_sum/(2*nonfatal_count - nonfatal_sum)
     fatal_similarity = 0 if fatal_count == 0 else fatal_sum/(2*fatal_count - fatal_sum)
-    print('nonfatal similarity:', nonfatal_similarity)
+    print('\nnonfatal similarity:', nonfatal_similarity)
     print('fatal similarity:   ', fatal_similarity)
-    similarity = ((nonfatal_count*nonfatal_similarity) + (fatal_count*fatal_similarity))/(nonfatal_count + fatal_count)
-
+    if nonfatal_similarity == 0 and fatal_similarity == 0:
+        similarity = 0
+    else:
+        similarity = ((nonfatal_count*nonfatal_similarity) + (fatal_count*fatal_similarity))/(nonfatal_count + fatal_count)
+    print('similarity:', similarity)
     return similarity
 
 
-def compute_date_range():
+def fatality_similarity(disease1_name, disease2_name, fatality, date_range):
     cursor = db_connection.cursor()
-    cursor.execute("SELECT MIN(PeriodStartDate) FROM noncumulative_all_conditions;")
-    min_datetime = datetime.combine(cursor.fetchone()[0], datetime.min.time())
-    print('min_date:', min_datetime)
-    cursor.execute("SELECT MAX(PeriodStartDate) FROM noncumulative_all_conditions;")
-    max_datetime = datetime.combine(cursor.fetchone()[0], datetime.min.time())
-    print('max_date:', max_datetime)
-    date_range = (max_datetime - min_datetime).days
-    print('date_range:', date_range)
-
-    return date_range
-
-
-def state_fatality_similarity(disease1_name, disease2_name, state, fatality, date_range):
-    cursor = db_connection.cursor()
-    cursor.execute("SELECT PeriodStartDate, CountValue FROM noncumulative_all_conditions WHERE ConditionName = '" +
-                   disease1_name + "' AND Fatalities = " + str(fatality) + " AND Admin1ISO = '" + state + "';")
+    cursor.execute("SELECT PeriodStartDate, CountValue, Admin1ISO FROM noncumulative_all_conditions WHERE"
+                   " ConditionName = '" + disease1_name + "' AND Fatalities = " + str(fatality) + ";")
     disease1_data = cursor.fetchall()
-    cursor.execute("SELECT PeriodStartDate, CountValue FROM noncumulative_all_conditions WHERE ConditionName = '" +
-                   disease2_name + "' AND Fatalities = " + str(fatality) + " AND Admin1ISO = '" + state + "';")
+    cursor.execute("SELECT PeriodStartDate, CountValue, Admin1ISO FROM noncumulative_all_conditions WHERE"
+                   " ConditionName = '" + disease2_name + "' AND Fatalities = " + str(fatality) + ";")
     disease2_data = cursor.fetchall()
+
+    print(disease1_name, ':', len(disease1_data), 'rows')
+    print(disease2_name, ':', len(disease2_data), 'rows')
 
     if len(disease1_data) < len(disease2_data):
         shorter_list = disease1_data
@@ -112,7 +104,12 @@ def row_similarity(row1, row2, date_range):
     # CountValue
     count1 = float(row1[1])
     count2 = float(row2[1])
-    similarity += min(count1/count2, count2/count1)
+    if count1 > 0 and count2 > 0:
+        similarity += min(count1/count2, count2/count1)
 
-    # print('similarity:', similarity/2)
-    return similarity/2
+    # Admin1ISO
+    if row1[2] == row2[2]:
+        similarity += 1
+
+    # print('similarity:', similarity/len(row1))
+    return similarity/len(row1)

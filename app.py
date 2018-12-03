@@ -18,7 +18,7 @@ def bryan():
 
 @app.route('/caleb')
 def caleb():
-    similarity = similarity_queries.compute_similarity('Chlamydia trachomatis infection', 'Chlamydial infection')
+    similarity = similarity_queries.compute_similarity('Dengue', 'Ornithosis')
     return render_template('caleb.html', similarity=similarity)
 
 
