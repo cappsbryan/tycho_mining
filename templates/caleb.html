@@ -2,13 +2,22 @@
 {% block content %}
     <h1>Disease Similarity</h1>
     <div class="form-group">
-        <label for="exampleFormControlSelect1">Example select</label>
+        <label for="exampleFormControlSelect1">Select first disease:</label>
         <select class="form-control" id="exampleFormControlSelect1">
             {% for disease in conditions %}
                 <option>{{ disease }}</option>
             {% endfor %}
         </select>
     </div>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">Select second disease:</label>
+        <select class="form-control" id="exampleFormControlSelect2">
+            {% for disease in conditions %}
+                <option>{{ disease }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Compute Similarity</button>
     <p>The similarity between the diseases is {{ similarity }}.</p>
 {% endblock %}
 
