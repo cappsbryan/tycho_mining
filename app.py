@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 
 import simple_queries
+import similarity_queries
 
 app = Flask(__name__)
 
@@ -17,9 +18,8 @@ def bryan():
 
 @app.route('/caleb')
 def caleb():
-    data = simple_queries.fatality_data()
-    average_fatalities, min_fatalities, max_fatalities = data
-    return render_template('caleb.html', avg=average_fatalities, min=min_fatalities, max=max_fatalities)
+    similarity = similarity_queries.compute_similarity('Chlamydia trachomatis infection', 'Chlamydial infection')
+    return render_template('caleb.html', similarity=similarity)
 
 
 if __name__ == '__main__':
