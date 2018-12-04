@@ -5,7 +5,36 @@
         This website uses data from <a href="https://www.tycho.pitt.edu/">Project Tycho</a> and several
         data mining algorithms to provide you with results that may be helpful in preventing outbreaks
         of disease. Click on one of the data mining tasks in the navigation bar above to start exploring
-        the data.
+        the data.<br>
+        The different data mining tasks are described below:
+    </p>
+    <br>
+    <h3>Aaron's Thing</h3>
+    <p>
+        Hey Aaron, put a little description here.
+    </p>
+    <h3>Association Rule Mining</h3>
+    <p>
+        This data mining task finds rules in the data of the form X -> Y where X and Y are different sets of
+        diseases. These rules say that areas that experience outbreaks of diseases in X tend to also
+        experience outbreaks of diseases in Y in a similar time frame. For example, US states that
+        have outbreaks of influenza and typhoid fever in a year also tend to have an outbreak of scarlet fever
+        that year.<br>
+        This task takes two parameters which are restrictions on the rules that can be included in the results.
+        The first is minimum support. This is the lower bound on the ratio of data points
+        (time, location combinations) that experienced outbreaks of diseases in all diseases
+        in X and Y to the total number of data points. This limits the returned rules to ones that occur
+        with some frequency. The second parameter is minimum confidence and this limits results to rules
+        that have some level of accuracy. This is the lower bound on the proportion of data points with
+        outbreaks of all the diseases in X that also have outbreaks of all the diseases in Y.
+    </p>
+    <h3>Caleb's Thing</h3>
+    <p>
+        Hey Caleb, put a little description here.
+    </p>
+    <h3>Dragon's Thing</h3>
+    <p>
+        Hey Dragon, put a little description here.
     </p>
 {% endblock %}
 
