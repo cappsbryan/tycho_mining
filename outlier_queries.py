@@ -1,5 +1,8 @@
 import MySQLdb
-from datetime import datetime
+import pandas as pd
+import os
+from collections import defaultdict
+from outlier_calc import top_outliers
 
 db_connection = MySQLdb.connect(
     host="localhost",
@@ -8,26 +11,43 @@ db_connection = MySQLdb.connect(
     db="tycho"
 )
 
-state_codes = ['US-AL', 'US-AK', 'US-AZ', 'US-AR', 'US-CA', 'US-CO', 'US-CT', 'US-DE', 'US-FL', 'US-GA', 'US-HI',
-               'US-ID', 'US-IL', 'US-IN', 'US-IA', 'US-KS', 'US-KY', 'US-LA', 'US-ME', 'US-MD', 'US-MA', 'US-MI',
-               'US-MN', 'US-MS', 'US-MO', 'US-MT', 'US-NE', 'US-NV', 'US-NH', 'US-NJ', 'US-NM', 'US-NY', 'US-NC',
-               'US-ND', 'US-OH', 'US-OK', 'US-OR', 'US-PA', 'US-RI', 'US-SC', 'US-SD', 'US-TN', 'US-TX', 'US-UT',
-               'US-VT', 'US-VA', 'US-WA', 'US-WV', 'US-WI', 'US-WY']
-date_range = 47313
-
-
 def find_outliers(disease):
     print_valid_data(disease)
     #TODO Add query to get only locale info
 
 def print_valid_data(disease):
     cursor = db_connection.cursor()
+   # query_all_diseases = "SELECT City, State, SUM(CountValue) AS Fatalities, Occurences" \
+   #              "FROM (SELECT CityName AS City, Admin1Name AS State, SUM(CountValue) AS Occurences" \
+   #                  "FROM noncumulative_all_conditions " \
+   #                  "WHERE CityName IS NOT NULL" \
+   #                  "GROUP BY CityName)" \
+   #              "WHERE Fatalities = 1" \
+   #              "GROUP BY CityName"
+    cities = defaultdict(dict)
     if disease == "all":
-        cursor.execute("SELECT CityName, SUM(Fatalities), SUM(CountValue), ConditionName FROM noncumulative_all_conditions WHERE CityName IS NOT NULL GROUP BY CityName")
+        query = "SELECT CityName, Admin1Name, Fatalities, SUM(CountValue) AS Occurences " \
+                         "FROM noncumulative_all_conditions " \
+                         "WHERE CityName IS NOT NULL " \
+                         "GROUP BY CityName, Admin1Name, Fatalities"
     else:
-        cursor.execute("SELECT CityName, SUM(Fatalities), SUM(CountValue) FROM noncumulative_all_conditions WHERE CityName IS NOT NULL AND ConditionName = '" + disease + "' GROUP BY CityName")
-    cities = cursor.fetchall()
-    print(cities)
+        query = "SELECT CityName, Admin1Name, Fatalities, SUM(CountValue) AS Occurecnes" \
+                             " FROM noncumulative_all_conditions " \
+                             "WHERE CityName IS NOT NULL AND ConditionName = '" + disease +"'" \
+                             "GROUP BY ConditionName, CityName, Admin1Name, Fatalities"
+    data = pd.read_sql(query, con=db_connection)
+    for index, row in data.iterrows():
+        key = (row["CityName"], row["Admin1Name"])
+        if key not in cities:
+            cities[key] = {"Fatalities": 0, "Occurences": 0}
+        if row["Fatalities"] == 1:
+            cities[key]["Fatalities"] += row["Occurences"]
+            cities[key]["Occurences"] += row["Occurences"]
+        else:
+            cities[key]["Occurences"] += row["Occurences"]
+    city_df = pd.DataFrame(cities).transpose()
+    outliers = top_outliers(city_df, max_rows = 10)
+    print(outliers)
 
 def popular_conditions():
     '''
