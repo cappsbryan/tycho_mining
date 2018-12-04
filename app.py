@@ -42,7 +42,7 @@ def similarity_results():
                            similarity=similarity_data)
 
 
-@app.route('/dragon', methods=['GET', 'POST'])
+@app.route('/clustering', methods=['GET', 'POST'])
 def dragon():
     k_clusters = 2
     decade = 1880
@@ -54,9 +54,12 @@ def dragon():
             k_clusters = 2
             decade = 1880
 
-    clusters = cluster.k_means(k_clusters, decade)
+
+    clusters, total_sum, sse_list = cluster.k_means(k_clusters, decade)
+
+    print(sse_list)
     return render_template('clustering.html', clusters=clusters, decades=cluster_types.decades, k=k_clusters,
-                           decade=decade)
+                           decade=decade, total_sum=round(total_sum, 2), sse_list=sse_list)
 
 
 if __name__ == '__main__':

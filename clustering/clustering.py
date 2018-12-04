@@ -40,7 +40,7 @@ def k_means(k, year, diseases=[]):
     # for cluster in new_k_clusters:
     #     print(cluster)
     output_csv(new_k_clusters)
-    return new_k_clusters
+    return new_k_clusters, total_sum, sse_list
 
 
 def k_means_clustering(k, data, data_indices=None):
