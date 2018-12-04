@@ -21,8 +21,7 @@ def association_rules_results():
     data = request.args
     min_support = float(data['min_support'])
     min_confidence = float(data['min_confidence'])
-    max_size = int(data['max_size'])
-    confidences = association_rules(min_support, min_confidence, max_size)
+    confidences = association_rules(min_support, min_confidence)
     return render_template('association_rules_results.html',
                            confidences=confidences)
 
