@@ -2,10 +2,25 @@
 # Data Mining Semester Project Group Tycho
 from statistics import mean
 import math
+import csv
 
 
 # def main():
 #     specify_k_means_parameters(1940)
+
+
+def output_csv(clusters):
+    with open('static/cluster_data.csv', mode='w', newline='') as data_file:
+        new_list = [state.upper() for state in d3_state_names]
+        data_writer = csv.writer(data_file, delimiter=',')
+        data_writer.writerow(['state','cluster'])
+        for index, cluster in enumerate(clusters):
+            for item in cluster:
+                if item in new_list:
+                    test_index = new_list.index(item)
+                    data_writer.writerow([d3_state_names[test_index], index])
+
+    print("hmmmm")
 
 
 def k_means(k, year, diseases=[]):
@@ -24,7 +39,7 @@ def k_means(k, year, diseases=[]):
     # print(new_centroids)
     # for cluster in new_k_clusters:
     #     print(cluster)
-
+    output_csv(new_k_clusters)
     return new_k_clusters
 
 
@@ -116,4 +131,54 @@ def load_data():
     return indices, dataset
 
 
+d3_state_names = ['Alabama',
+                  'Alaska',
+                  'Arkansas',
+                  'Arizona',
+                  'California',
+                  'Colorado',
+                  'Connecticut',
+                  'Delaware',
+                  'Florida',
+                  'Georgia',
+                  'Hawaii',
+                  'Iowa',
+                  'Idaho',
+                  'Illinois',
+                  'Indiana',
+                  'Kansas',
+                  'Kentucky',
+                  'Louisiana',
+                  'Maine',
+                  'Maryland',
+                  'Massachusetts',
+                  'Michigan',
+                  'Minnesota',
+                  'Missouri',
+                  'Mississippi',
+                  'Montana',
+                  'North Carolina',
+                  'North Dakota',
+                  'Nebraska',
+                  'New Hampshire',
+                  'New Jersey',
+                  'New Mexico',
+                  'Nevada',
+                  'New York',
+                  'Ohio',
+                  'Oklahoma',
+                  'Oregon',
+                  'Pennsylvania',
+                  'Rhode Island',
+                  'South Carolina',
+                  'South Dakota',
+                  'Tennessee',
+                  'Texas',
+                  'Utah',
+                  'Virginia',
+                  'Vermont',
+                  'Washington',
+                  'Wisconsin',
+                  'West Virginia',
+                  'Wyoming']
 # main()

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 
 import simple_queries
+import similarity_queries
 import clustering.clustering as cluster
 import clustering.data_types as cluster_types
 
