@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div>
+        <h2>Results - Association Rule Mining</h2>
+    </div>
+    <div id="results">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">X</th>
+                <th scope="col">Y</th>
+                <th scope="col">Confidence</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rule in confidences["rules"] %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ ", ".join(rule["x"]) }}</td>
+                    <td>{{ ", ".join(rule["y"]) }}</td>
+                    <td>{{ rule["confidence"] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        markActiveNavItem("bryan");
+    </script>
+{% endblock %}
