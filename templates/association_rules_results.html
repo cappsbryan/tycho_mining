@@ -14,12 +14,12 @@
             </tr>
             </thead>
             <tbody>
-            {% for rule in confidences["rules"] %}
+            {% for rule, confidence in confidences.items() %}
                 <tr>
                     <th scope="row">{{ loop.index }}</th>
-                    <td>{{ ", ".join(rule["x"]) }}</td>
-                    <td>{{ ", ".join(rule["y"]) }}</td>
-                    <td>{{ rule["confidence"] }}</td>
+                    <td>{{ ", ".join(rule[0]) }}</td>
+                    <td>{{ ", ".join(rule[1]) }}</td>
+                    <td>{{ confidence }}</td>
                 </tr>
             {% endfor %}
             </tbody>

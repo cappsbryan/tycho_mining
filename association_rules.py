@@ -3,21 +3,17 @@ import itertools
 import os
 from collections import defaultdict
 from functools import reduce
-from typing import Tuple, Dict, FrozenSet, Set, List, Any, Union, Collection
+from typing import Tuple, Dict, FrozenSet, Set, List, Union, Collection
 
 import MySQLdb
 import numpy as np
 
+# type definitions
 StrItemSet = FrozenSet[str]
 IndexItemSet = FrozenSet[int]
-
-StrRule = Tuple[StrItemSet, StrItemSet]
-ListRule = List[List[str]]
-IndexRule = Tuple[FrozenSet[int], FrozenSet[int]]
-
 GenericItemSet = Union[StrItemSet, IndexItemSet]
-GenericRule = Tuple[GenericItemSet, GenericItemSet]
-
+StrRule = Tuple[StrItemSet, StrItemSet]
+IndexRule = Tuple[FrozenSet[int], FrozenSet[int]]
 StateYearPair = Tuple[str, int]
 
 db_connection = MySQLdb.connect(
@@ -28,14 +24,22 @@ db_connection = MySQLdb.connect(
 )
 
 
-def association_rules(min_support: float, min_confidence: float) -> Dict[str, List[Dict[str, Any]]]:
+def association_rules(min_support: float, min_confidence: float) -> Dict[StrRule, float]:
+    """
+    Find all the association rules fulfilling the minimum support and minimum confidence requirements
+    :param min_support: the lower bound on the ratio of data points that contain the diseases in the rule
+    to total data points for rules that should be included in the result
+    :param min_confidence: the lower bound on the ratio of data points that contain both x and y
+    to data points that contain x for rules (x to y) that should be included in the result
+    :return:
+    """
     diseases_dict = diseases_at_time_and_place()
     transactions = list(diseases_dict.values())
     binary_transactions = make_binary(transactions)
     frequent = apriori(min_support, binary_transactions)
     rules = rule_generation(frequent)
     confidences = top_rules(rules, min_confidence, binary_transactions, transactions)
-    return reformat_rules_for_json(confidences)
+    return confidences
 
 
 def diseases_at_time_and_place() -> Dict[StateYearPair, StrItemSet]:
@@ -134,18 +138,6 @@ def index_rule_to_str_rule(index_rule: IndexRule, transactions) -> StrRule:
     return tuple(frozenset(all_diseases[i] for i in side) for side in index_rule)
 
 
-def reformat_rules_for_json(confidences: Dict[StrRule, float]):
-    rules = []
-    for rule in confidences:
-        rule_dict = {
-            "x": sorted(rule[0]),
-            "y": sorted(rule[1]),
-            "confidence": confidences[rule]
-        }
-        rules.append(rule_dict)
-    return {"rules": rules}
-
-
 def update_diseases(all_diseases: Dict[StateYearPair, StrItemSet], cursor: MySQLdb.cursors.Cursor):
     """
     Fetches rows from cursor and updates all_diseases with the rows
@@ -180,22 +172,6 @@ def write_diseases_at_time_and_place_cache(all_diseases, path):
             writer.writerow([pair[0], pair[1], len(diseases)] + list(diseases))
 
 
-def frequent_one_itemsets(minsup: float, transactions, supports: Dict[StrItemSet, int]) -> Set[StrItemSet]:
-    """
-    Returns one item sets with at least minsup support in transactions
-    Also updates supports with the support values calculated
-    :param minsup: minimum support needed for a item set to be considered frequent
-    :param transactions: list of "purchased" item sets
-    :param supports: dict from item set to count of that item set
-    :return:
-    """
-    for transaction in transactions:
-        for item in transaction:
-            one_itemset = frozenset([item])
-            supports[one_itemset] += 1
-    return set(filter(lambda itemset: supports[itemset] >= len(transactions) * minsup, supports.keys()))
-
-
 def gen_candidates(prev_sets: Set[GenericItemSet]) -> Set[GenericItemSet]:
     """
     Generate the candidate item sets of size k based on prev_sets, a set of frequent item sets of size k-1
@@ -217,17 +193,6 @@ def gen_candidates(prev_sets: Set[GenericItemSet]) -> Set[GenericItemSet]:
         if subsets_are_frequent:
             itemsets.add(frozenset(itemset))
     return itemsets
-
-
-def candidates_in_transaction(candidates: Set[IndexItemSet], transaction: np.ndarray):
-    """
-    Returns all the candidate item sets in the given transaction
-    :param candidates: the candidate item sets to look for, items are indexes that correspond to diseases
-    :param transaction: a single transaction of "purchased" items, elements are 1 if disease with the same index
-    is in transaction, 0 otherwise
-    :return: candidate item sets from candidates that are in transaction
-    """
-    return {candidate for candidate in candidates if all([transaction[item] for item in candidate])}
 
 
 def rule_confidence(rule: IndexRule, binary_data: np.ndarray) -> float:
@@ -261,25 +226,3 @@ def support(x: Collection[int], binary_data: np.ndarray):
 
 def indexes_to_binary_list(indexes, n):
     return [1 if i in indexes else 0 for i in range(n)]
-
-
-def prettify_rules(confidences: Dict[StrRule, float]) -> List[str]:
-    strings = '\n'
-    for i, rule in enumerate(sorted(confidences)):
-        rule_string = prettify_rule(rule)
-        strings += rule_string.ljust(100) + str(confidences[rule]).rjust(10) + '\n'
-    return strings
-
-
-def prettify_rule(rule):
-    return prettify_itemset(rule[0]) + ' -> ' + prettify_itemset(rule[1])
-
-
-def prettify_itemset(itemset):
-    string = '{ '
-    for i, item in enumerate(itemset):
-        string += "'" + item + "'"
-        if i != len(itemset) - 1:
-            string += ", "
-    string += ' }'
-    return string
