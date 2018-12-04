@@ -115,3 +115,6 @@ dmypy.json
 
 # Tycho CSV files
 setup/csv/
+
+# cached output files
+diseases_at_time_and_place.csv

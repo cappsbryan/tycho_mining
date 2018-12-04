@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div>
+        <h2>Association Rule Mining</h2>
+        <p>Pick your options and hit submit to run the algorithm and see the results.</p>
+    </div>
+    <form method="get" action="/association_rules_results" onsubmit="return showLoading()">
+        <div class="form-group">
+            <label for="min_support">Minimum support</label>
+            <input id="min_support" class="form-control" type="number" name="min_support" min="0.01" max="1"
+                   step="0.01" value="0.05">
+        </div>
+        <div class="form-group">
+            <label for="min_confidence">Minimum confidence</label>
+            <input id="min_confidence" class="form-control" type="number" name="min_confidence" min="0" max="1"
+                   step="0.01" value="0.9">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        markActiveNavItem("bryan");
+
+        function showLoading() {
+            const buttons = document.getElementsByClassName("btn");
+            for (let button of buttons) {
+                button.disabled = true;
+                button.innerText = "Loading...";
+            }
+            return true;
+        }
+    </script>
+{% endblock %}

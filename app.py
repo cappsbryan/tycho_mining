@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
-
-import simple_queries
 import similarity_queries
+from association_rules import association_rules
 import clustering.clustering as cluster
 import clustering.data_types as cluster_types
 
@@ -13,9 +12,19 @@ def hello_world():
     return render_template('home.html')
 
 
-@app.route('/bryan')
-def bryan():
-    return render_template('bryan.html', users=['Dragon', 'Aaron', 'Caleb'])
+@app.route('/association_rules')
+def association_rules_page():
+    return render_template('association_rules.html')
+
+
+@app.route('/association_rules_results')
+def association_rules_results():
+    data = request.args
+    min_support = float(data['min_support'])
+    min_confidence = float(data['min_confidence'])
+    confidences = association_rules(min_support, min_confidence)
+    return render_template('association_rules_results.html',
+                           confidences=confidences)
 
 
 @app.route('/similarity')
