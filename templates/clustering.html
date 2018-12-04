@@ -1,6 +1,49 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1> hello cruel world </h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="card">
+                    <div class="card-header">K-Means</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Clustering Parameters</h5>
+
+                        <form action="/dragon" method="POST">
+                            <div class="form-group">
+                                <label for="decadeSelect"> Decade </label>
+                                <select class="form-control" id="decadeSelect" name="selectedDecade">
+                                    <option selected="hidden"> {{ decade }} </option>
+                                    {% for decade in decades %}
+                                        <option value="{{ decade }}">{{ decade }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="clusterCount">Number of Clusters (K)</label>
+                                <input type="number" min="2" max="10" class="form-control" name="clusters"
+                                       value= {{ k }}>
+                            </div>
+                            <input type="submit" class="btn btn-primary my-1">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8" style="background-color:pink;">
+                <div id="container" style="position: relative; width: 500px; height: 300px;"></div>
+            </div>
+        </div>
+        <br/>
+
+        <div class="card">
+            <div class="card-header"><b>Raw Output</b></div>
+            <div class="card-body">
+                {% for cluster in clusters %}
+                    <p class="card-text">{{ cluster }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}

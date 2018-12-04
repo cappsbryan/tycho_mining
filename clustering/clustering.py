@@ -4,11 +4,11 @@ from statistics import mean
 import math
 
 
-def main():
-    specify_k_means_parameters(1940)
+# def main():
+#     specify_k_means_parameters(1940)
 
 
-def specify_k_means_parameters(year, diseases=[]):
+def k_means(k, year, diseases=[]):
     indexes, data = load_data()
     query_data = []
     query_index = []
@@ -17,13 +17,15 @@ def specify_k_means_parameters(year, diseases=[]):
             query_data.append(data[i])
             query_index.append(indexes[i])
 
-    total_sum, sse_list, new_centroids, new_k_clusters = k_means_clustering(2, query_data, query_index)
+    total_sum, sse_list, new_centroids, new_k_clusters = k_means_clustering(k, query_data, query_index)
 
     # print(total_sum)
     # print(sse_list)
     # print(new_centroids)
-    for cluster in new_k_clusters:
-        print(cluster)
+    # for cluster in new_k_clusters:
+    #     print(cluster)
+
+    return new_k_clusters
 
 
 def k_means_clustering(k, data, data_indices=None):
@@ -114,4 +116,4 @@ def load_data():
     return indices, dataset
 
 
-main()
+# main()

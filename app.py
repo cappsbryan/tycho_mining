@@ -1,6 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 import simple_queries
+import clustering.clustering as cluster
+import clustering.data_types as cluster_types
 
 app = Flask(__name__)
 
@@ -22,9 +24,21 @@ def caleb():
     return render_template('caleb.html', avg=average_fatalities, min=min_fatalities, max=max_fatalities)
 
 
-@app.route('/dragon')
+@app.route('/dragon', methods=['GET', 'POST'])
 def dragon():
-    return render_template('clustering.html')
+    k_clusters = 2
+    decade = 1880
+
+    if request.method == 'POST':
+        k_clusters = int(request.form['clusters'])
+        decade = int(request.form['selectedDecade'])
+        if not request.form['clusters'] or not request.form['selectedDecade']:
+            k_clusters = 2
+            decade = 1880
+
+    clusters = cluster.k_means(k_clusters, decade)
+    return render_template('clustering.html', clusters=clusters, decades=cluster_types.decades, k=k_clusters,
+                           decade=decade)
 
 
 if __name__ == '__main__':
