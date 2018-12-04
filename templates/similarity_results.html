@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Disease Similarity Results</h1>
+    <p>The similarity between {{ condition1 }} and {{ condition2 }} is {{ similarity }}.</p>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        markActiveNavItem("caleb");
+    </script>
+{% endblock %}

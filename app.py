@@ -17,11 +17,19 @@ def bryan():
     return render_template('bryan.html', users=['Dragon', 'Aaron', 'Caleb'])
 
 
-@app.route('/caleb')
-def caleb():
-    data = simple_queries.fatality_data()
-    average_fatalities, min_fatalities, max_fatalities = data
-    return render_template('caleb.html', avg=average_fatalities, min=min_fatalities, max=max_fatalities)
+@app.route('/similarity')
+def similarity():
+    return render_template('similarity.html', conditions=similarity_queries.condition_names())
+
+
+@app.route('/similarity_results')
+def similarity_results():
+    data = request.args
+    condition1 = data['condition1']
+    condition2 = data['condition2']
+    similarity_data = similarity_queries.compute_similarity(condition1, condition2)
+    return render_template('similarity_results.html', condition1=condition1, condition2=condition2,
+                           similarity=similarity_data)
 
 
 @app.route('/dragon', methods=['GET', 'POST'])
