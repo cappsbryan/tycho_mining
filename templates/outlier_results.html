@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Outlier Results</h1>
+    <p>The city outliers with respect to disease {{ condition }} are {{ outliers }}.</p>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        markActiveNavItem("aaron");
+    </script>
+{% endblock %}

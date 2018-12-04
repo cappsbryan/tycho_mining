@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import similarity_queries
+import outlier_queries
 
 app = Flask(__name__)
 
@@ -12,6 +13,18 @@ def hello_world():
 @app.route('/bryan')
 def bryan():
     return render_template('bryan.html', users=['Dragon', 'Aaron', 'Caleb'])
+
+
+@app.route('/outliers')
+def outliers():
+    return render_template('outliers.html', conditions=outlier_queries.popular_conditions())
+
+@app.route('/outlier_results')
+def outlier_results():
+    data = request.args
+    condition = data['condition']
+    outlier_data = outlier_queries.find_outliers(condition)
+    return render_template('outlier_results.html', condition=condition, outliers=outlier_data)
 
 
 @app.route('/similarity')

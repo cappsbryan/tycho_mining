@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h2>Outlier Detection</h2>
+    <form method="get" action="/outlier_results" onsubmit="return showLoading()" id="pick_disease">
+        <div class="form-group">
+            <label for="select1">Select a pathogen or find city outliers for all pathogens:</label>
+            <select class="form-control" id="select1" onchange="setInput1()">
+                {% for disease in conditions %}
+                    <option>{{ disease }}</option>
+                {% endfor %}
+            </select>
+            <input id="input1" name="condition" style="display:none">
+        </div>
+        <button type="button" class="btn btn-primary" id="find_all" onclick="findAll()">Find Outliers For All Diseases</button>
+        <button type="button" class="btn btn-primary" id="find_one" onclick="findOne()">Find Outliers For Selected</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        markActiveNavItem("aaron");
+
+        function setInput1() {
+            const select = document.getElementById("select1");
+            const input = document.getElementById("input1");
+            input.value = select[select.selectedIndex].text;
+        }
+
+        function showLoading() {
+            const buttons = document.getElementsByClassName("btn");
+            for (let button of buttons) {
+                button.disabled = true;
+                button.innerText = "Loading...";
+            }
+            return true;
+        }
+
+        function findAll(){
+            const input = document.getElementById("input1");
+            input.value = "all"
+            showLoading()
+            document.getElementById("pick_disease").submit();
+        }
+
+        function findOne(){
+            setInput1()
+            showLoading()
+            document.getElementById("pick_disease").submit();
+        }
+
+        setInput1();
+    </script>
+{% endblock %}
