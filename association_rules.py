@@ -123,7 +123,8 @@ def rule_generation(frequent_sets: Set[IndexItemSet]) -> List[IndexRule]:
 def top_rules(rules: List[IndexRule], min_confidence: float, binary_data: np.ndarray,
               transactions: List[StrItemSet]) -> Dict[StrRule, float]:
     confidences = {rule: rule_confidence(rule, binary_data) for rule in rules}
-    satisfactory_rules = {rule: confidences[rule] for rule in confidences if confidences[rule] > min_confidence}
+    satisfactory_rules = [(rule, confidences[rule]) for rule in confidences if confidences[rule] > min_confidence]
+    satisfactory_rules.sort(key=lambda rc: rc[1], reverse=True)
     str_rules = {index_rule_to_str_rule(r, transactions): c for r, c in satisfactory_rules}
     return str_rules
 
