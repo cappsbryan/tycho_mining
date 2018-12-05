@@ -38,6 +38,11 @@
         function findAll(){
             const input = document.getElementById("input1");
             input.value = "all"
+            const select = document.getElementById("select1");
+            var option = document.createElement("option");
+            option.text = "All";
+            select.add(option);
+            select.value = "All";
             showLoading()
             document.getElementById("pick_disease").submit();
         }
