@@ -1,13 +1,19 @@
-import pandas as pd
 import numpy as np
 from collections import defaultdict
 
 highest_k_val = 5
 w = 1.5
 
-# Occurence for all diseases will be tied to population
-# But over all diseases, can calculate outliers of fatality %
+
 def top_outliers(df, max_rows, type, method):
+    '''
+    Calculates the outliers of fatalities, occurences, and percentages using knn and normal distributions
+    :param df: the data
+    :param max_rows: how many rows to return for knn
+    :param type: What column we want to use to look for outliers
+    :param method: Which method (knn or normal)
+    :return: Outliers found with the given parameters
+    '''
     col = ""
     if type == "pct_fatal":
         col = 'Fatality_Pct'
@@ -28,10 +34,15 @@ def top_outliers(df, max_rows, type, method):
         return outliers
 
 
-#Parametric Method: Outlier Detection for Univariate Outliers based on Normal Distribution
 def parametric_method(data, col, w):
+    '''
+    Parametric Method: Outlier Detection for Univariate Outliers based on Normal Distribution
+    :param data:
+    :param col: which column to inspect
+    :param w: max/min value for z-scores (far from center of distribution)
+    :return: outliers found via normal distribution comparison
+    '''
     print('w =', w)
-    outliers = pd.DataFrame(columns=data.columns)
     d_mean = np.mean(data[col])
     d_stddev = np.std(data[col])
     outlier_rows = []
@@ -45,13 +56,17 @@ def parametric_method(data, col, w):
             outlier_rows.append(outlier)
             zscores.append(z_score)
     outliers = data.loc[outlier_indices]
-  #  outliers = pd.DataFrame(outlier_rows)
     outliers["Z-scores"] = zscores
-
     return outliers
 
-# apply the k-nearest-neighbor method to compute outlier distance
 def knn(data, col, max_k):
+    '''
+    Apply the k-nearest-neighbor method to compute outlier distance
+    :param data:
+    :param col: which column to inspect
+    :param max_k: Calculate for k = 2 up till max k
+    :return: outliers found via knn
+    '''
     #normalized_df = (data - data.mean()) / data.std()
     print("Executing knn")
     all_scores = []
