@@ -9,7 +9,7 @@
                     <option>{{ disease }}</option>
                 {% endfor %}
             </select>
-            <input id="input1" name="condition1" style="display:none">
+            <input id="inputDisease1" name="condition1" style="display:none">
         </div>
         <div class="form-group">
             <label for="select2">Select second disease:</label>
@@ -18,7 +18,24 @@
                     <option>{{ disease }}</option>
                 {% endfor %}
             </select>
-            <input id="input2" name="condition2" style="display:none">
+            <input id="inputDisease2" name="condition2" style="display:none">
+        </div>
+        <div class="form-group">
+            <label for="select2">Select region:</label>
+            <select class="form-control" id="selectState" onchange="setState()">
+                {% for state in state_names %}
+                    <option>{{ state }}</option>
+                {% endfor %}
+            </select>
+            <input id="inputState" name="state" style="display:none">
+        </div>
+        <div class="form-group">
+            <label for="inputStartDate">Date</label>
+            <input class="form-control" type="date" value="1888-06-10" id="inputStartDate" name="start_date">
+        </div>
+        <div class="form-group">
+            <label for="inputEndDate">Date</label>
+            <input class="form-control" type="date" value="2017-12-31" id="inputEndDate" name="end_date">
         </div>
         <button type="submit" class="btn btn-primary">Compute Similarity</button>
     </form>
@@ -30,13 +47,19 @@
 
         function setInput1() {
             const select = document.getElementById("select1");
-            const input = document.getElementById("input1");
+            const input = document.getElementById("inputDisease1");
             input.value = select[select.selectedIndex].text;
         }
 
         function setInput2() {
             const select = document.getElementById("select2");
-            const input = document.getElementById("input2");
+            const input = document.getElementById("inputDisease2");
+            input.value = select[select.selectedIndex].text;
+        }
+
+        function setState() {
+            const select = document.getElementById("selectState");
+            const input = document.getElementById("inputState");
             input.value = select[select.selectedIndex].text;
         }
 
@@ -51,5 +74,6 @@
         
         setInput1();
         setInput2();
+        setState();
     </script>
 {% endblock %}

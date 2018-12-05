@@ -1,7 +1,47 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Hi everybody!</h1>
-    <p>Thanks for coming to check out our project.</p>
+    <h1>Analysis of Disease Outbreaks</h1>
+    <p>
+        This website uses data from <a href="https://www.tycho.pitt.edu/">Project Tycho</a> and several
+        data mining algorithms to provide you with results that may be helpful in preventing outbreaks
+        of disease. Click on one of the data mining tasks in the navigation bar above to start exploring
+        the data.<br>
+        The different data mining tasks are described below:
+    </p>
+    <br>
+    <h3>Aaron's Thing</h3>
+    <p>
+        Hey Aaron, put a little description here.
+    </p>
+    <h3>Association Rule Mining</h3>
+    <p>
+        This data mining task finds rules in the data of the form X -> Y where X and Y are different sets of
+        diseases. These rules say that areas that experience outbreaks of diseases in X tend to also
+        experience outbreaks of diseases in Y in a similar time frame. For example, US states that
+        have outbreaks of influenza and typhoid fever in a year also tend to have an outbreak of scarlet fever
+        that year.<br>
+        This task takes two parameters which are restrictions on the rules that can be included in the results.
+        The first is minimum support. This is the lower bound on the ratio of data points
+        (time, location combinations) that experienced outbreaks of diseases in all diseases
+        in X and Y to the total number of data points. This limits the returned rules to ones that occur
+        with some frequency. The second parameter is minimum confidence and this limits results to rules
+        that have some level of accuracy. This is the lower bound on the proportion of data points with
+        outbreaks of all the diseases in X that also have outbreaks of all the diseases in Y.
+    </p>
+    <h3>Similarity Mining</h3>
+    <p>
+        This data mining task determines the similarity of two diseases based on location, date, and the number of
+        fatal and nonfatal cases. Each factor is considered equally.<br>
+        The user chooses two diseases to compare, a date range, and a location, and the algorithm finds the similarity
+        between those diseases based on records for that location which fall within that date range.
+    </p>
+    <h3>Clustering</h3>
+    <p>
+        This data mining task clusters states by disease frequency count using K-means. Additionally, it displays the
+        displays the results on a choropleth map visualization. With this we hope to provide the ability to identify new patterns
+        through visual cluster analysis. User can modify parameters K (number of clusters to identify) and select which decade
+        to cluster by.
+    </p>
 {% endblock %}
 
 {% block scripts %}

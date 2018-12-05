@@ -13,6 +13,7 @@
 
     {# Extension point for any additional styles in child templates #}
     {% block styles %}{% endblock %}
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 
     <title>{% block title %}Data Mining Project{% endblock %}</title>
 </head>
@@ -20,7 +21,7 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">Mining</a>
+    <a class="navbar-brand" href="#">Disease Outbreaks</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
             aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -35,13 +36,13 @@
                 <a class="nav-link aaron-link" href="/outliers">Outliers</a>
             </li>
             <li class="nav-item bryan-item">
-                <a class="nav-link bryan-link" href="/bryan">Bryan</a>
+                <a class="nav-link bryan-link" href="/association_rules">Association Rules</a>
             </li>
             <li class="nav-item caleb-item">
                 <a class="nav-link caleb-link" href="/similarity">Similarity</a>
             </li>
             <li class="nav-item dragon-item">
-                <a class="nav-link dragon-link" href="/dragon">Dragon</a>
+                <a class="nav-link dragon-link" href="/clustering">Clustering</a>
             </li>
         </ul>
     </div>
