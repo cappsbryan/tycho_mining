@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import similarity_queries
+import outlier_queries
 from association_rules import association_rules
 import clustering.clustering as cluster
 import clustering.data_types as cluster_types
@@ -24,6 +25,18 @@ def association_rules_results():
     min_confidence = float(data['min_confidence'])
     confidences = association_rules(min_support, min_confidence)
     return render_template('association_rules_results.html', confidences=confidences)
+
+
+@app.route('/outliers')
+def outliers():
+    return render_template('outliers.html', conditions=outlier_queries.popular_conditions())
+
+@app.route('/outlier_results')
+def outlier_results():
+    data = request.args
+    condition = data['condition']
+    pct_knn, pct_normal, occ_knn, occ_normal, fatal_knn, fatal_normal = outlier_queries.find_outliers(condition)
+    return render_template('outlier_results.html', condition=condition,  pct_knn = pct_knn, pct_normal = pct_normal, occ_knn = occ_knn, occ_normal = occ_normal, fatal_knn = fatal_knn, fatal_normal= fatal_normal)
 
 
 @app.route('/similarity')
