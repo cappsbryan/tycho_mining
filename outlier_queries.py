@@ -1,6 +1,5 @@
 import MySQLdb
 import pandas as pd
-import os
 from collections import defaultdict
 from outlier_calc import top_outliers
 
@@ -12,6 +11,11 @@ db_connection = MySQLdb.connect(
 )
 
 def find_outliers(disease):
+    '''
+    Takes a disease and returns outlier cities and their info
+    :param disease: string, disease in database or "all"
+    :return: 6 pandas dataframes containing outlier cities
+    '''
     cities = defaultdict(dict)
     if disease == "all":
         query = "SELECT * FROM (" \
@@ -55,8 +59,8 @@ def find_outliers(disease):
 
 def popular_conditions():
     '''
-
-    :return:
+    A list of prepopulated popular conditions to chooose from. We don't want to let the user select diseases without enough data for outliers to exist
+    :return: the list
     '''
     '''
     cursor = db_connection.cursor()
@@ -75,20 +79,3 @@ def popular_conditions():
             'Smallpox without rash', 'Tuberculosis', 'Tularemia', 'Typhoid and paratyphoid fevers', 'Typhoid fever',
             'Typhus group rickettsial disease', 'Varicella', 'Viral hepatitis', 'Viral hepatitis type B',
             'Viral hepatitis, type A', 'Yellow fever']
-
-def condition_names():
-    """
-
-    :return:
-    """
-    """
-    cursor = db_connection.cursor()
-    cursor.execute("SELECT ConditionName FROM noncumulative_all_conditions GROUP BY ConditionName")
-    names = []
-    for name in cursor.fetchall():
-        names.append(name[0])
-    print(names)
-    return names
-    """
-    return ['Amebic dysentery', 'Anthrax', 'Babesiosis', 'Bacillary dysentery', 'Brucellosis', 'Chlamydia trachomatis infection', 'Chlamydial infection', 'Cholera', 'Coccidioidomycosis', 'Cryptosporidiosis', 'Dengue', 'Dengue hemorrhagic fever', 'Dengue without warning signs', 'Diphtheria', 'Dysentery', 'Human ehrlichiosis caused by Ehrlichia chaffeensis', 'Varicella', 'Encephalitis', 'Encephalitis lethargica', 'Giardiasis', 'Gonorrhea', 'Haemophilus influenzae infection', 'Human anaplasmosis caused by Anaplasma phagocytophilum', 'Infection caused by Escherichia coli', 'Infection caused by Shiga toxin producing Escherichia coli', 'Infective encephalitis', 'Inflammatory disease of liver', 'Post-infectious encephalitis', 'Primary encephalitis', 'Viral hepatitis', 'Viral hepatitis type B', 'Viral hepatitis, type A', 'Acute type A viral hepatitis', 'Acute type B viral hepatitis', 'Aseptic meningitis', 'Hepatitis non-A non-B', 'Influenza', 'Invasive meningococcal disease', 'Invasive Streptococcus pneumoniae disease', 'Legionella infection', 'Leprosy', 'Lyme disease', 'Malaria', 'Measles', 'Meningitis', 'Meningococcal infectious disease', 'Meningococcal meningitis', 'Mumps', 'Acute nonparalytic poliomyelitis', 'Acute paralytic poliomyelitis', 'Acute poliomyelitis', 'Infantile paralysis', 'Invasive Group A beta-hemolytic streptococcal disease', 'Lobar pneumonia', 'Ornithosis', 'Pellagra', 'Pneumonia', 'Rocky Mountain spotted fever', 'Rubella', 'Salmonella infection', 'Scarlet fever', 'Shigellosis', 'Smallpox', 'Spotted fever group rickettsial disease', 'Streptococcal sore throat', 'Active tuberculosis', 'Disorder of nervous system caused by West Nile virus', 'Infection caused by larvae of Trichinella', 'Invasive drug resistant Streptococcus pneumoniae disease', 'Murine typhus', 'Pertussis', 'Smallpox without rash', 'Tetanus', 'Toxic shock syndrome', 'Tuberculosis', 'Tularemia', 'Typhoid and paratyphoid fevers', 'Typhoid fever', 'Typhus group rickettsial disease', 'West Nile fever without encephalitis', 'Acute hepatitis C', 'Campylobacteriosis', 'Infection caused by non-cholerae vibrio', 'Yellow fever']
-
