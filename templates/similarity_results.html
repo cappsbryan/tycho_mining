@@ -1,7 +1,26 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Disease Similarity Results</h1>
-    <p>The similarity between {{ condition1 }} and {{ condition2 }} is {{ similarity }}.</p>
+    <table border="0" border-collapse="collapse" cellpadding="5">
+        <tr>
+            <th scope="row">Disease 1:</th><td>{{ condition1 }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Disease 2:</th><td>{{ condition2 }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Location:</th><td>{{ state }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Start Date:</th><td>{{ start_date }}</td>
+        </tr>
+        <tr>
+            <th scope="row">End Date:</th><td>{{ end_date }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Similarity:</th><td>{{ similarity }}</td>
+        </tr>
+    </table>
 {% endblock %}
 
 {% block scripts %}
