@@ -26,15 +26,19 @@ def print_valid_data(disease):
    #              "GROUP BY CityName"
     cities = defaultdict(dict)
     if disease == "all":
-        query = "SELECT CityName, Admin1Name, Fatalities, SUM(CountValue) AS Occurences " \
+        query = "SELECT * FROM (" \
+                "SELECT CityName, Admin1Name, Fatalities, SUM(CountValue) AS Occurences " \
                          "FROM noncumulative_all_conditions " \
                          "WHERE CityName IS NOT NULL " \
-                         "GROUP BY CityName, Admin1Name, Fatalities"
+                         "GROUP BY CityName, Admin1Name, Fatalities) a " \
+                "WHERE Occurences >= 10"
     else:
-        query = "SELECT CityName, Admin1Name, Fatalities, SUM(CountValue) AS Occurecnes" \
+        query = "SELECT * FROM (" \
+                "SELECT CityName, Admin1Name, Fatalities, SUM(CountValue) AS Occurences" \
                              " FROM noncumulative_all_conditions " \
                              "WHERE CityName IS NOT NULL AND ConditionName = '" + disease +"'" \
-                             "GROUP BY ConditionName, CityName, Admin1Name, Fatalities"
+                             "GROUP BY ConditionName, CityName, Admin1Name, Fatalities) a " \
+                "WHERE Occurences >= 10"
     data = pd.read_sql(query, con=db_connection)
     for index, row in data.iterrows():
         key = (row["CityName"], row["Admin1Name"])
@@ -46,8 +50,13 @@ def print_valid_data(disease):
         else:
             cities[key]["Occurences"] += row["Occurences"]
     city_df = pd.DataFrame(cities).transpose()
-    outliers = top_outliers(city_df, max_rows = 10)
-    print(outliers)
+
+    pct_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="pct_fatal", method="knn")
+    occ_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="occurrence", method="knn")
+    pct_normal_outliers = top_outliers(city_df.copy(), max_rows= 10, type="pct_fatal", method="normal")
+    occ_normal_outliers = top_outliers(city_df.copy(), max_rows = 10, type="occurrence", method="normal")
+
+    print(pct_normal_outliers)
 
 def popular_conditions():
     '''

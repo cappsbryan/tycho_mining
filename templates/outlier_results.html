@@ -1,7 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
+<body>
     <h1>Outlier Results</h1>
     <p>The city outliers with respect to disease {{ condition }} are {{ outliers }}.</p>
+    <table>
+        {% for disease in conditions %}
+                    <option>{{ disease }}</option>
+        {% endfor %}
+    </table>
+</body>
 {% endblock %}
 
 {% block scripts %}
