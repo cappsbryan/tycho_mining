@@ -14,6 +14,8 @@ def top_outliers(df, max_rows, type, method):
         df[col] = (df["Fatalities"]/df["Occurences"]).fillna(value=0)
     if type == "occurrence":
         col = "Occurences"
+    if type == "fatalities":
+        col = "Fatalities"
 #    df.drop(fatal_col, axis=1, inplace=True)
 #    df.drop(count_col, axis=1, inplace=True)
     if method == "knn":

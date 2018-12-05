@@ -12,18 +12,6 @@ db_connection = MySQLdb.connect(
 )
 
 def find_outliers(disease):
-    print_valid_data(disease)
-    #TODO Add query to get only locale info
-
-def print_valid_data(disease):
-    cursor = db_connection.cursor()
-   # query_all_diseases = "SELECT City, State, SUM(CountValue) AS Fatalities, Occurences" \
-   #              "FROM (SELECT CityName AS City, Admin1Name AS State, SUM(CountValue) AS Occurences" \
-   #                  "FROM noncumulative_all_conditions " \
-   #                  "WHERE CityName IS NOT NULL" \
-   #                  "GROUP BY CityName)" \
-   #              "WHERE Fatalities = 1" \
-   #              "GROUP BY CityName"
     cities = defaultdict(dict)
     if disease == "all":
         query = "SELECT * FROM (" \
@@ -52,11 +40,18 @@ def print_valid_data(disease):
     city_df = pd.DataFrame(cities).transpose()
 
     pct_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="pct_fatal", method="knn")
-    occ_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="occurrence", method="knn")
     pct_normal_outliers = top_outliers(city_df.copy(), max_rows= 10, type="pct_fatal", method="normal")
+
+    occ_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="occurrence", method="knn")
     occ_normal_outliers = top_outliers(city_df.copy(), max_rows = 10, type="occurrence", method="normal")
 
-    print(pct_normal_outliers)
+    fatal_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="fatalities", method="knn")
+    fatal_normal_outliers = top_outliers(city_df.copy(), max_rows = 10, type="fatalities", method="normal")
+
+    outliers = {"knn_pct" : pct_knn_outliers, "knn_occ" : occ_knn_outliers, "knn_fatal" : fatal_knn_outliers,
+                "normal_pct" : pct_normal_outliers, "normal_occ" : occ_normal_outliers, "normal_fatal" : fatal_normal_outliers}
+
+    return outliers
 
 def popular_conditions():
     '''

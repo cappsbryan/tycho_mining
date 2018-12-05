@@ -1,14 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<body>
-    <h1>Outlier Results</h1>
-    <p>The city outliers with respect to disease {{ condition }} are {{ outliers }}.</p>
-    <table>
-        {% for disease in conditions %}
-                    <option>{{ disease }}</option>
+    <div>
+        <h2>Outlier Results</h2>
+    </div>
+    <div id="results">
+        {% for metric in outliers %}
+      <!--  <p>{{metric}}</p> -->
+        <table class="table">
+            <thead>
+                <tr>
+                    {% for val in {metric}.columns.values.tolist() %}
+                    <th scope = "col">{{val}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+        </table>
         {% endfor %}
-    </table>
-</body>
+    </div>
+
 {% endblock %}
 
 {% block scripts %}
