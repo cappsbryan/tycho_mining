@@ -11,6 +11,9 @@
     <!-- Base styles for our site -->
     <link rel="stylesheet" type="text/css" href="../static/styles.css" media="all"/>
 
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+
     {# Extension point for any additional styles in child templates #}
     {% block styles %}{% endblock %}
     <script src="http://d3js.org/d3.v3.min.js"></script>
