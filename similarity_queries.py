@@ -36,7 +36,18 @@ def compute_similarity(disease1, disease2, state, start_date, end_date):
 
 
 def individual_similarity_sum(disease1_name, disease2_name, state, start_date, end_date):
+    """
+    Sum similarity scores for pairs of records in a given location and date range
+    :param disease1_name: Name of the first disease
+    :param disease2_name: Name of the second disease
+    :param state: state in which to search
+    :param start_date: earliest date
+    :param end_date: latest date
+    :return: the sum of the similarity scores
+    """
     cursor = db_connection.cursor()
+
+    # find all records for the first condition
     query_end = ";" if state == "All" else " AND Admin1Name = '" + state + "';"
     query_disease1 = "SELECT PeriodStartDate, CountValue, Fatalities, Admin1Name FROM noncumulative_all_conditions " \
                      "WHERE ConditionName = '" + disease1_name + "' AND PeriodStartDate > " + \
@@ -45,6 +56,7 @@ def individual_similarity_sum(disease1_name, disease2_name, state, start_date, e
     cursor.execute(query_disease1)
     disease1_data = cursor.fetchall()
 
+    # find all records for the second condition
     query_disease2 = "SELECT PeriodStartDate, CountValue, Fatalities, Admin1Name FROM noncumulative_all_conditions " \
                      "WHERE ConditionName = '" + disease2_name + "' AND PeriodStartDate > " + \
                      start_date.replace('-', '') + " AND PeriodStartDate < " + end_date.replace('-', '') + query_end
@@ -55,6 +67,7 @@ def individual_similarity_sum(disease1_name, disease2_name, state, start_date, e
     print(disease1_name, ':', len(disease1_data), 'rows')
     print(disease2_name, ':', len(disease2_data), 'rows')
 
+    # determine which disease has more records
     if len(disease1_data) < len(disease2_data):
         shorter_list = disease1_data
         longer_list = list(disease2_data)
@@ -65,6 +78,7 @@ def individual_similarity_sum(disease1_name, disease2_name, state, start_date, e
     similarity_count = len(shorter_list)
     similarity_sum = 0
 
+    # compute similarity scores for pairs of records
     for shorter_item in shorter_list:
         max_similarity = 0
         max_similarity_entry = None
@@ -74,7 +88,6 @@ def individual_similarity_sum(disease1_name, disease2_name, state, start_date, e
                 max_similarity = similarity
                 max_similarity_entry = longer_item
 
-        # print(shorter_item, max_similarity_entry, max_similarity)
         similarity_sum += max_similarity
         longer_list.remove(max_similarity_entry)
 
@@ -82,10 +95,14 @@ def individual_similarity_sum(disease1_name, disease2_name, state, start_date, e
 
 
 def row_similarity(row1, row2, compare_state):
+    """
+    Compute similarity between two rows by normalizing the attribute differences
+    :param row1: The first row
+    :param row2: Th second row
+    :param compare_state: True if location should be considered in the comparison
+    :return: a similarity score in the range [0, 1]
+    """
     global date_range
-    # print('computing similarity between rows:')
-    # print(row1)
-    # print(row2)
     similarity = 0
 
     # PeriodStartDate
@@ -108,34 +125,33 @@ def row_similarity(row1, row2, compare_state):
     if compare_state and row1[3] == row2[3]:
         similarity += 1
 
-    # print('similarity:', similarity/len(row1))
     return similarity/len(row1)
 
 
 def get_condition_names():
-    return ['Amebic dysentery', 'Anthrax', 'Babesiosis', 'Bacillary dysentery', 'Brucellosis',
-            'Chlamydia trachomatis infection', 'Chlamydial infection', 'Cholera', 'Coccidioidomycosis',
-            'Cryptosporidiosis', 'Dengue', 'Dengue hemorrhagic fever', 'Dengue without warning signs', 'Diphtheria',
-            'Dysentery', 'Human ehrlichiosis caused by Ehrlichia chaffeensis', 'Varicella', 'Encephalitis',
+    return ['Active tuberculosis', 'Acute hepatitis C', 'Acute nonparalytic poliomyelitis',
+            'Acute paralytic poliomyelitis', 'Acute poliomyelitis', 'Acute type A viral hepatitis',
+            'Acute type B viral hepatitis', 'Amebic dysentery', 'Anthrax', 'Aseptic meningitis', 'Babesiosis',
+            'Bacillary dysentery', 'Brucellosis', 'Campylobacteriosis', 'Chlamydia trachomatis infection',
+            'Chlamydial infection', 'Cholera', 'Coccidioidomycosis', 'Cryptosporidiosis', 'Dengue',
+            'Dengue hemorrhagic fever', 'Dengue without warning signs', 'Diphtheria',
+            'Disorder of nervous system caused by West Nile virus', 'Dysentery', 'Encephalitis',
             'Encephalitis lethargica', 'Giardiasis', 'Gonorrhea', 'Haemophilus influenzae infection',
-            'Human anaplasmosis caused by Anaplasma phagocytophilum', 'Infection caused by Escherichia coli',
-            'Infection caused by Shiga toxin producing Escherichia coli', 'Infective encephalitis',
-            'Inflammatory disease of liver', 'Post-infectious encephalitis', 'Primary encephalitis', 'Viral hepatitis',
-            'Viral hepatitis type B', 'Viral hepatitis, type A', 'Acute type A viral hepatitis',
-            'Acute type B viral hepatitis', 'Aseptic meningitis', 'Hepatitis non-A non-B', 'Influenza',
-            'Invasive meningococcal disease', 'Invasive Streptococcus pneumoniae disease', 'Legionella infection',
-            'Leprosy', 'Lyme disease', 'Malaria', 'Measles', 'Meningitis', 'Meningococcal infectious disease',
-            'Meningococcal meningitis', 'Mumps', 'Acute nonparalytic poliomyelitis', 'Acute paralytic poliomyelitis',
-            'Acute poliomyelitis', 'Infantile paralysis', 'Invasive Group A beta-hemolytic streptococcal disease',
-            'Lobar pneumonia', 'Ornithosis', 'Pellagra', 'Pneumonia', 'Rocky Mountain spotted fever', 'Rubella',
-            'Salmonella infection', 'Scarlet fever', 'Shigellosis', 'Smallpox',
-            'Spotted fever group rickettsial disease', 'Streptococcal sore throat', 'Active tuberculosis',
-            'Disorder of nervous system caused by West Nile virus', 'Infection caused by larvae of Trichinella',
-            'Invasive drug resistant Streptococcus pneumoniae disease', 'Murine typhus', 'Pertussis',
-            'Smallpox without rash', 'Tetanus', 'Toxic shock syndrome', 'Tuberculosis', 'Tularemia',
-            'Typhoid and paratyphoid fevers', 'Typhoid fever', 'Typhus group rickettsial disease',
-            'West Nile fever without encephalitis', 'Acute hepatitis C', 'Campylobacteriosis',
-            'Infection caused by non-cholerae vibrio', 'Yellow fever']
+            'Hepatitis non-A non-B', 'Human anaplasmosis caused by Anaplasma phagocytophilum',
+            'Human ehrlichiosis caused by Ehrlichia chaffeensis', 'Infantile paralysis',
+            'Infection caused by Escherichia coli', 'Infection caused by Shiga toxin producing Escherichia coli',
+            'Infection caused by larvae of Trichinella', 'Infection caused by non-cholerae vibrio',
+            'Infective encephalitis', 'Inflammatory disease of liver', 'Influenza',
+            'Invasive Group A beta-hemolytic streptococcal disease', 'Invasive Streptococcus pneumoniae disease',
+            'Invasive drug resistant Streptococcus pneumoniae disease', 'Invasive meningococcal disease',
+            'Legionella infection', 'Leprosy', 'Lobar pneumonia', 'Lyme disease', 'Malaria', 'Measles', 'Meningitis',
+            'Meningococcal infectious disease', 'Meningococcal meningitis', 'Mumps', 'Murine typhus', 'Ornithosis',
+            'Pellagra', 'Pertussis', 'Pneumonia', 'Post-infectious encephalitis', 'Primary encephalitis',
+            'Rocky Mountain spotted fever', 'Rubella', 'Salmonella infection', 'Scarlet fever', 'Shigellosis',
+            'Smallpox', 'Smallpox without rash', 'Spotted fever group rickettsial disease', 'Streptococcal sore throat',
+            'Tetanus', 'Toxic shock syndrome', 'Tuberculosis', 'Tularemia', 'Typhoid and paratyphoid fevers',
+            'Typhoid fever', 'Typhus group rickettsial disease', 'Varicella', 'Viral hepatitis',
+            'Viral hepatitis type B', 'Viral hepatitis, type A', 'West Nile fever without encephalitis', 'Yellow fever']
 
 
 def get_state_names():
