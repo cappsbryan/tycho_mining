@@ -24,6 +24,7 @@ def top_outliers(df, max_rows, type, method):
         return outliers.iloc[:max_rows]
     else:
         outliers = parametric_method(df, col, w= w)
+        outliers = outliers.sort_values(by=['Z-scores'], ascending=False)
         return outliers
 
 
@@ -46,6 +47,7 @@ def parametric_method(data, col, w):
     outliers = data.loc[outlier_indices]
   #  outliers = pd.DataFrame(outlier_rows)
     outliers["Z-scores"] = zscores
+
     return outliers
 
 # apply the k-nearest-neighbor method to compute outlier distance
@@ -58,7 +60,10 @@ def knn(data, col, max_k):
         # index of 1 skips the first column which is the city name
         dist = [np.abs(row[col] - inner_row[col]) for inner_index, inner_row in data.iterrows() if index != inner_index]
         for k in range(2,max_k):
-            outlier_scores[k]= (sorted(dist))[k]
+            if len(dist) > k:
+                outlier_scores[k]= (sorted(dist))[k]
+            else:
+                outlier_scores[k] = 0
         all_scores.append(outlier_scores.copy())
 
     for k in range(2,max_k):

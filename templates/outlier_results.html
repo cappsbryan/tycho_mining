@@ -3,20 +3,19 @@
     <div>
         <h2>Outlier Results</h2>
     </div>
-    <div id="results">
-        {% for metric in outliers %}
-      <!--  <p>{{metric}}</p> -->
-        <table class="table">
-            <thead>
-                <tr>
-                    {% for val in {metric}.columns.values.tolist() %}
-                    <th scope = "col">{{val}}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-        </table>
-        {% endfor %}
-    </div>
+
+<h3>Outlier Cities -- By percentage of fatalities using KNN</h3>
+{{ pct_knn.to_html() | safe}}
+<h3>Outlier Cities -- By percentage of fatalities using normal distribution</h3>
+{{ pct_normal.to_html() | safe}}
+<h3>Outlier Cities -- By number of disease occurrences using KNN</h3>
+{{ occ_knn.to_html() | safe}}
+<h3>Outlier Cities -- By number of disease occurrences using normal distribution</h3>
+{{ occ_normal.to_html() | safe}}
+<h3>Outlier Cities -- By number of fatalities using KNN</h3>
+{{ fatal_knn.to_html() | safe}}
+<h3>Outlier Cities -- By number of fatalities using normal distribution</h3>
+{{ fatal_normal.to_html() | safe}}
 
 {% endblock %}
 

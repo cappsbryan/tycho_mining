@@ -23,8 +23,8 @@ def outliers():
 def outlier_results():
     data = request.args
     condition = data['condition']
-    outlier_data = outlier_queries.find_outliers(condition)
-    return render_template('outlier_results.html', condition=condition, outliers=outlier_data)
+    pct_knn, pct_normal, occ_knn, occ_normal, fatal_knn, fatal_normal = outlier_queries.find_outliers(condition)
+    return render_template('outlier_results.html', condition=condition,  pct_knn = pct_knn, pct_normal = pct_normal, occ_knn = occ_knn, occ_normal = occ_normal, fatal_knn = fatal_knn, fatal_normal= fatal_normal)
 
 
 @app.route('/similarity')

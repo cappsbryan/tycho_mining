@@ -48,10 +48,10 @@ def find_outliers(disease):
     fatal_knn_outliers = top_outliers(city_df.copy(), max_rows = 10, type="fatalities", method="knn")
     fatal_normal_outliers = top_outliers(city_df.copy(), max_rows = 10, type="fatalities", method="normal")
 
-    outliers = {"knn_pct" : pct_knn_outliers, "knn_occ" : occ_knn_outliers, "knn_fatal" : fatal_knn_outliers,
-                "normal_pct" : pct_normal_outliers, "normal_occ" : occ_normal_outliers, "normal_fatal" : fatal_normal_outliers}
-
-    return outliers
+    # outliers = {"knn_pct" : pct_knn_outliers, "knn_occ" : occ_knn_outliers, "knn_fatal" : fatal_knn_outliers,
+    #             "normal_pct" : pct_normal_outliers, "normal_occ" : occ_normal_outliers, "normal_fatal" : fatal_normal_outliers}
+    # return outliers
+    return pct_knn_outliers, pct_normal_outliers, occ_knn_outliers, occ_normal_outliers, fatal_knn_outliers, fatal_normal_outliers
 
 def popular_conditions():
     '''
