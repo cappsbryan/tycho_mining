@@ -1,5 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
+<style>
+    button {
+        margin: 10px;
+    }
+    h2 {
+        margin: 20px;
+    }
+</style>
     <h2>Outlier Detection</h2>
     <form method="get" action="/outlier_results" onsubmit="return showLoading()" id="pick_disease">
         <div class="form-group">
