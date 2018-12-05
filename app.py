@@ -23,13 +23,13 @@ def association_rules_results():
     min_support = float(data['min_support'])
     min_confidence = float(data['min_confidence'])
     confidences = association_rules(min_support, min_confidence)
-    return render_template('association_rules_results.html',
-                           confidences=confidences)
+    return render_template('association_rules_results.html', confidences=confidences)
 
 
 @app.route('/similarity')
 def similarity():
-    return render_template('similarity.html', conditions=similarity_queries.condition_names())
+    return render_template('similarity.html', conditions=similarity_queries.get_condition_names(),
+                           state_names=similarity_queries.get_state_names())
 
 
 @app.route('/similarity_results')
@@ -37,9 +37,12 @@ def similarity_results():
     data = request.args
     condition1 = data['condition1']
     condition2 = data['condition2']
-    similarity_data = similarity_queries.compute_similarity(condition1, condition2)
-    return render_template('similarity_results.html', condition1=condition1, condition2=condition2,
-                           similarity=similarity_data)
+    state = data['state']
+    start_date = data['start_date']
+    end_date = data['end_date']
+    similarity_data = similarity_queries.compute_similarity(condition1, condition2, state, start_date, end_date)
+    return render_template('similarity_results.html', condition1=condition1, condition2=condition2, state=state,
+                           start_date=start_date, end_date=end_date, similarity=similarity_data)
 
 
 @app.route('/clustering', methods=['GET', 'POST'])
