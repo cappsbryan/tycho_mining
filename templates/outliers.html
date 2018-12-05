@@ -11,7 +11,7 @@
     <h2>Outlier Detection</h2>
     <form method="get" action="/outlier_results" onsubmit="return showLoading()" id="pick_disease">
         <div class="form-group">
-            <label for="select1">Select a pathogen or find city outliers for all pathogens:</label>
+            <label for="select1">Select a disease or find city outliers for all diseases:</label>
             <select class="form-control" id="select1" onchange="setInput1()">
                 {% for disease in conditions %}
                     <option>{{ disease }}</option>
